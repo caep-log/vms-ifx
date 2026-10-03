@@ -1,0 +1,210 @@
+.vm-ifx-input-group{
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    width: 100%;
+}
+
+.vm-ifx-input-group__input{
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    width: 100%;
+}
+
+.vm-ifx-input-field{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+    width: 100%;
+}
+
+.vm-ifx-input-label{
+    position: static;
+    align-self: flex-start;
+    padding: 0;
+    color: var(--gray);
+    background-color: transparent;
+    pointer-events: none;
+    transition: color .2s ease;
+    z-index: 1;
+}
+
+.vm-ifx-input,
+.vm-ifx-select{
+    color: var(--text);
+    padding: .5rem .75rem .5rem .75rem;
+    width: 100%;
+    min-height: 2rem;
+    border: 1px solid var(--primary-dark);
+    border-radius: 0;
+    background-color: var(--primary-muted);
+    transition: border-color .2s ease, box-shadow .2s ease;
+
+    &::placeholder{
+        opacity: 0;
+        transition: opacity .2s ease;
+    }
+
+    &:hover{
+        border-color: var(--border-hover);
+    }
+
+    &:focus{
+        outline: none;
+        border-color: var(--primary);
+    }
+}
+
+.vm-ifx-input-field--focused,
+.vm-ifx-input-field--has-value{
+    .vm-ifx-input-label{
+        transform: none;
+    }
+}
+
+.vm-ifx-input-field--focused{
+    .vm-ifx-input-label{
+        color: var(--primary);
+    }
+
+    .vm-ifx-input::placeholder{
+        opacity: .55;
+    }
+}
+
+.vm-ifx-input-field--error{
+    .vm-ifx-input,
+    .vm-ifx-select{
+        border-color: var(--danger);
+    }
+
+    .vm-ifx-input-label{
+        color: var(--danger);
+    }
+}
+
+.vm-ifx-input-field--disabled{
+    .vm-ifx-input,
+    .vm-ifx-select{
+        cursor: not-allowed;
+        opacity: .75;
+    }
+}
+
+.vm-ifx-input-field--select{
+    .vm-ifx-select{
+        cursor: pointer;
+        appearance: none;
+        padding-right: 2.5rem;
+        background-image: linear-gradient(45deg, transparent 50%, var(--gray) 50%), linear-gradient(135deg, var(--gray) 50%, transparent 50%);
+        background-position: calc(100% - 1rem) calc(50% + 2px), calc(100% - .65rem) calc(50% + 2px);
+        background-size: .4rem .4rem, .4rem .4rem;
+        background-repeat: no-repeat;
+    }
+}
+
+.vm-ifx-input__error{
+    color: var(--danger) !important;
+}
+
+.vm-ifx-input--error{
+    border-color: var(--danger);
+}
+
+.vm-ifx-input-group--checkbox{
+    width: auto;
+}
+
+.vm-ifx-checkbox-field{
+    display: inline-flex;
+    align-items: center;
+    gap: .75rem;
+    width: fit-content;
+    min-height: 2rem;
+    padding: 0rem 1rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color .2s ease, background-color .2s ease;
+
+    &:hover{
+        border-color: var(--primary);
+    }
+}
+
+.vm-ifx-checkbox-input{
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    accent-color: var(--primary);
+}
+
+.vm-ifx-checkbox-label{
+    color: var(--gray);
+}
+
+.vm-ifx-input-group--checkbox.vm-ifx-input-group--disabled{
+    .vm-ifx-checkbox-field{
+        cursor: not-allowed;
+        opacity: .75;
+    }
+}
+
+.vm-ifx-input-group--checkbox.vm-ifx-input-group--error{
+    .vm-ifx-checkbox-field{
+        border-color: var(--danger);
+    }
+
+    .vm-ifx-checkbox-label{
+        color: var(--danger);
+    }
+}
+
+.vm-ifx-input-field--search{
+    .vm-ifx-input{
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+    }
+
+    .vm-ifx-input-label{
+        left: 0;
+    }
+}
+
+.vm-ifx-input-search-icon,
+.vm-ifx-input-clear-button{
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    padding: 0;
+    background-color: var(--white);
+    color: var(--gray);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.vm-ifx-input-search-icon{
+    left: .5rem;
+    pointer-events: none;
+}
+
+.vm-ifx-input-clear-button{
+    right: .5rem;
+    cursor: pointer;
+
+    &:hover{
+        color: var(--danger);
+    }
+}
+
+.required-message{
+    color: var(--danger);
+}

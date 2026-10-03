@@ -1,0 +1,33 @@
+{
+  "name": "vm-ifx",
+  "version": "1.0.0",
+  "description": "vms ifx - prueba",
+  "homepage": "https://github.com/caep-log/vms-ifx#readme",
+  "bugs": {
+    "url": "https://github.com/caep-log/vms-ifx/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caep-log/vms-ifx.git"
+  },
+  "license": "ISC",
+  "author": "andrey enciso",
+  "type": "commonjs",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "tsx index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
