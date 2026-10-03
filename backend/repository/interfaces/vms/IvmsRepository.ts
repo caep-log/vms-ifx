@@ -1,8 +1,9 @@
-import { requestDTO } from "../../../dtos/requestDTO";
+import { VmDTO } from "../../../dtos/vmDTO";
 
 export interface IvmsRepository {
-    readonly findByEmail: (email: string) => Promise<requestDTO | null>;
-    readonly create: (user: requestDTO) => Promise<requestDTO>;
-    readonly update: (user: requestDTO) => Promise<requestDTO>;
-    readonly delete: (email: string) => Promise<void>;
+    readonly findAll: () => Promise<VmDTO[]>;
+    readonly findById: (id: string) => Promise<VmDTO | null>;
+    readonly create: (vm: VmDTO) => Promise<VmDTO>;
+    readonly update: (id: string, changes: Partial<Omit<VmDTO, "id">>) => Promise<VmDTO | null>;
+    readonly delete: (id: string) => Promise<void>;
 }

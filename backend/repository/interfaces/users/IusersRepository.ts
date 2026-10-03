@@ -1,8 +1,8 @@
 import { requestDTO } from "../../../dtos/requestDTO";
 
-export interface IusersRepository {
+export interface IUsersRepository {
     readonly findByEmail: (email: string) => Promise<requestDTO | null>;
-    readonly create: (user: requestDTO) => Promise<requestDTO>;
-    readonly update: (user: requestDTO) => Promise<requestDTO>;
+    readonly create: (user: requestDTO) => Promise<void>;
+    readonly update: (user: Partial<requestDTO> & Pick<requestDTO, "id">) => Promise<void>;
     readonly delete: (email: string) => Promise<void>;
 }

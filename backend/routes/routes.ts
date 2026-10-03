@@ -1,4 +1,6 @@
 import { Router } from "express";
+import usersRoutes from "./users.Routes";
+import vmsRoutes from "./vms.Routes";
 
 const router = Router();
 
@@ -8,5 +10,8 @@ router.get("/monitor", (req, res) => {
         message: "API VMs IFX is running - " + new Date().toISOString(),
     });
 });
+
+router.use("/users", usersRoutes);
+router.use("/vms", vmsRoutes);
 
 export default router;

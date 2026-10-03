@@ -17,7 +17,7 @@ import {
 
 const region = process.env.region;
 const endpoint = process.env.endpoint;
-const accessKeyId = process.env.accessKey;
+const accessKeyId = process.env.accessKeyId || process.env.accessKey;
 const secretAccessKey = process.env.secretAccessKey;
 
 const LOG_TABLE_NAME = "errorLog";
