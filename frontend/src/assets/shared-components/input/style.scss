@@ -1,0 +1,26 @@
+.mv-ifx-input-group{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-width: 250px;
+    width: 100%;
+
+    & > input {
+        font-size: 14px;
+        margin-top: 5px;
+        padding: 5px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        user-select: none;
+        background-color: var(--surface);
+        color: var(--text);
+
+        &:hover{
+            border: 1px solid var(--border-hover);
+        }
+    }
+
+    .required-message{
+        color: var(--danger);
+    }
+}

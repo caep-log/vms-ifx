@@ -1,0 +1,41 @@
+:root {
+  /* Backgrounds */
+  --bg: #080C0A;
+  --bg-secondary: #0B110D;
+  --surface: #101812;
+  --surface-elevated: #162119;
+
+  /* Borders */
+  --border: #26352A;
+  --border-hover: #3E5C43;
+
+  /* Primary - Radioactive Green */
+  --primary: #B6FF00;
+  --primary-hover: #CCFF33;
+  --primary-dark: #7FAF00;
+  --primary-muted: rgba(182, 255, 0, 0.10);
+  --primary-glow: rgba(182, 255, 0, 0.25);
+
+  /* Accent */
+  --accent: #39FF14;
+
+  /* Text */
+  --text: #F2F7F3;
+  --text-secondary: #9BAAA0;
+  --text-muted: #637268;
+
+  /* Status */
+  --success: #39FF14;
+  --warning: #FFD60A;
+  --danger: #FF4567;
+  --info: #7CFFCB;
+
+  /* Effects */
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --glow: 0 0 24px rgba(182, 255, 0, 0.20);
+}
+
+body{
+    padding: 1rem;
+    background-color: var(--bg);
+}
