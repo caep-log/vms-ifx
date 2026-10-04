@@ -1,4 +1,4 @@
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+import type { HttpMethod } from "../../shared/types/types";
 
 export interface ApiRequestOptions<TBody = unknown> {
     method?: HttpMethod;
