@@ -57,6 +57,7 @@ if USER_POOL_ID=$(aws cognito-idp create-user-pool \
     CLIENT_ID=$(aws cognito-idp create-user-pool-client \
         --user-pool-id "$USER_POOL_ID" \
         --client-name vms-client \
+        --explicit-auth-flows ALLOW_ADMIN_USER_PASSWORD_AUTH ALLOW_REFRESH_TOKEN_AUTH \
         --region "$REGION" \
         --endpoint-url "$ENDPOINT" \
         --query 'UserPoolClient.ClientId' \
