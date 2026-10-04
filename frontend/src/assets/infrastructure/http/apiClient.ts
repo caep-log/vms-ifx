@@ -184,7 +184,7 @@ export const createApiClient = (config: ApiClientConfig = {}) => {
 };
 
 export const apiClient = createApiClient({
-    baseUrl: import.meta.env.VITE_API_URL,
-    refreshPath: import.meta.env.VITE_API_REFRESH_URL,
-    loginPath: import.meta.env.VITE_API_LOGIN_URL,
+    baseUrl: "http://localhost:3000",
+    refreshPath: import.meta.env.VITE_API_REFRESH_URL || '/api/users/refresh',
+    loginPath: import.meta.env.VITE_API_LOGIN_URL || '/api/users/login',
 });

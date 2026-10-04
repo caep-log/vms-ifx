@@ -1,16 +1,12 @@
-import { createBrowserRouter } from "react-router";
-import { RouterProvider } from "react-router/dom";
-import Index from '../features/public';
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+import { routes } from './routes';
+import './style.scss';
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Index />,
-  },
-]);
+const router = createBrowserRouter(routes);
 
 function App() {
-  return (<RouterProvider router={router} />)
-};
+    return <RouterProvider router={router} />;
+}
 
 export default App;

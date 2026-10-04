@@ -1,0 +1,83 @@
+.ifx-authenticated-layout{
+    height: 100vh;
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+
+    header {
+        min-width: 250px;
+        padding: 1rem;
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1rem;
+        transition: border-color .2s ease;
+
+        &:hover{
+            border-color: var(--border-hover);
+        }
+
+        & > nav {
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .user-info{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            user-select: none;
+            margin-bottom: 1rem;
+        }
+
+        .pic-profile{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-muted);
+        }
+
+        .navigation-list{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            a{
+                padding: 0.5rem;
+                border-radius: 4px;
+                text-decoration: none;
+                color: var(--text);
+                transition: background-color .2s ease;
+
+                &:hover{
+                    background-color: var(--primary-muted);
+                }
+
+                &.active{
+                    background-color: var(--primary-muted);
+                }
+            }
+        }
+    }
+
+    main{
+        width: 100%;
+        height: 100%;
+
+        & > section {
+            width: 100%;
+            height: 100%;
+            padding: 1rem 0rem;
+        }
+    }
+}
