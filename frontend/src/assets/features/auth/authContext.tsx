@@ -2,13 +2,11 @@ import {
     createContext,
     useContext,
     useEffect,
-    useMemo,
     useState,
     type ReactNode,
 } from 'react';
 import { apiClient } from '../../infrastructure/http/apiClient';
-
-export type UserRole = 'Admin' | 'Client';
+import type { AuthStatus, UserRole, ApiRole } from '../../shared/types/types';
 
 export interface AuthUser {
     id?: string;
@@ -17,44 +15,68 @@ export interface AuthUser {
     role: UserRole;
 }
 
-type AuthStatus = 'checking' | 'authenticated' | 'unauthenticated';
-
 interface AuthContextValue {
     status: AuthStatus;
     user: AuthUser | null;
     isAuthenticated: boolean;
     isAdmin: boolean;
     login: (email: string, password: string) => Promise<void>;
+    signUp: (email: string, password: string, profile?: string) => Promise<void>;
+    logout: () => Promise<void>;
+    deleteAccount: () => Promise<void>;
+}
+
+interface AuthResponse {
+    user: Omit<AuthUser, 'role'>;
+    role: ApiRole;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-const isRecord = (value: unknown): value is Record<string, unknown> => {
-    return typeof value === 'object' && value !== null;
+const toAuthUser = ({ user, role }: AuthResponse): AuthUser => ({
+    ...user,
+    role: role === 'Administrador' ? 'Admin' : 'Client',
+});
+
+const getSession = async (): Promise<AuthUser | null> => {
+    try {
+        const response = await apiClient.get<AuthResponse>('/api/users/session', {
+            requiresAuth: false,
+            skipAuthRefresh: true,
+        });
+
+        return toAuthUser(response);
+    } catch {
+        return null;
+    }
 };
 
-const toAuthUser = (payload: unknown): AuthUser | null => {
-    if (!isRecord(payload)) {
-        return null;
-    }
+const signupRequest = async (
+    email: string,
+    password: string,
+    profile: string,
+): Promise<AuthUser> => {
+    const response = await apiClient.post<AuthResponse, {
+        email: string;
+        password: string;
+        role: string;
+    }>(
+        '/api/users/sign-up',
+        { email, password, role: profile },
+        { requiresAuth: false, skipAuthRefresh: true },
+    );
 
-    const candidate = isRecord(payload.user)
-        ? payload.user
-        : isRecord(payload.data)
-            ? payload.data
-            : payload;
-    const role = candidate.role;
+    return toAuthUser(response);
+};
 
-    if (role !== 'Admin' && role !== 'Client') {
-        return null;
-    }
+const loginRequest = async (email: string, password: string): Promise<AuthUser> => {
+    const response = await apiClient.post<AuthResponse, { email: string; password: string }>(
+        '/api/users/login',
+        { email, password },
+        { requiresAuth: false, skipAuthRefresh: true },
+    );
 
-    return {
-        id: typeof candidate.id === 'string' ? candidate.id : undefined,
-        name: typeof candidate.name === 'string' ? candidate.name : undefined,
-        email: typeof candidate.email === 'string' ? candidate.email : undefined,
-        role,
-    };
+    return toAuthUser(response);
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -63,28 +85,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         let cancelled = false;
-        const sessionPath = import.meta.env.VITE_API_SESSION_URL?.trim() || '/api/users/session';
-
-        apiClient
-            .get<unknown>(sessionPath, {
-                requiresAuth: false,
-                skipAuthRefresh: true,
-            })
-            .then((payload) => {
-                if (cancelled) {
-                    return;
-                }
-
-                const nextUser = toAuthUser(payload);
-                setUser(nextUser);
-                setStatus(nextUser ? 'authenticated' : 'unauthenticated');
-            })
-            .catch(() => {
-                if (!cancelled) {
-                    setUser(null);
-                    setStatus('unauthenticated');
-                }
-            });
+        getSession().then((nextUser) => {
+            if (cancelled) return;
+            setUser(nextUser);
+            setStatus(nextUser ? 'authenticated' : 'unauthenticated');
+        });
 
         return () => {
             cancelled = true;
@@ -92,32 +97,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const login = async (email: string, password: string) => {
-        const payload = await apiClient.post<unknown, { email: string; password: string }>(
-            import.meta.env.VITE_API_LOGIN_URL?.trim() || '/api/users/login',
-            { email, password },
-            { requiresAuth: false, skipAuthRefresh: true },
-        );
-        const nextUser = toAuthUser(payload);
-
-        if (!nextUser) {
-            throw new Error('La respuesta de autenticación no contiene un usuario válido');
-        }
-
+        const nextUser = await loginRequest(email, password);
         setUser(nextUser);
         setStatus('authenticated');
     };
 
-    const value = useMemo<AuthContextValue>(() => ({
+    const signUp = async (email: string, password: string, profile?: string) => {
+        const nextUser = await signupRequest(email, password, profile ?? '');
+        setUser(nextUser);
+        setStatus('authenticated');
+    };
+
+    const logout = async () => {
+        await apiClient.post<void>('/api/users/logout', undefined, {
+            requiresAuth: false,
+            skipAuthRefresh: true,
+        });
+        setUser(null);
+        setStatus('unauthenticated');
+    };
+
+    const deleteAccount = async () => {
+        await apiClient.delete<void>('/api/users/delete-user');
+        setUser(null);
+        setStatus('unauthenticated');
+    };
+
+    const value: AuthContextValue = {
         status,
         user,
         isAuthenticated: status === 'authenticated',
         isAdmin: user?.role === 'Admin',
         login,
-    }), [status, user]);
+        signUp,
+        logout,
+        deleteAccount,
+    };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// eslint-disable-next-line
 export function useAuth() {
     const context = useContext(AuthContext);
 
