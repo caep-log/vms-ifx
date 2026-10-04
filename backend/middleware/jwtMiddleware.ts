@@ -8,10 +8,8 @@ export class JwtMiddleware {
             .map((cookie) => cookie.trim())
             .find((cookie) => cookie.startsWith("accessToken="))
             ?.slice("accessToken=".length);
-        const headerToken = req.headers.authorization?.startsWith("Bearer ")
-            ? req.headers.authorization.slice(7)
-            : undefined;
-        const token = cookieToken ?? headerToken;
+
+        const token = cookieToken;
 
         if (!token) return res.status(401).json({ message: "Token is required" });
 

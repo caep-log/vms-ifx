@@ -3,10 +3,12 @@ import { UsersController } from "../controllers/UsersController";
 import { JwtMiddleware } from "../middleware/jwtMiddleware";
 import { UsersRepository } from "../repository/users/usersRepository";
 import { AuthService } from "../services/AuthService";
+import { CognitoIdentityService } from "../services/CognitoIdentityService";
 
 const router = Router();
 const repository = new UsersRepository();
-const service = new AuthService(repository);
+const identity = new CognitoIdentityService();
+const service = new AuthService(repository, identity);
 const controller = new UsersController(service);
 
 router.post("/refresh", controller.refresh);

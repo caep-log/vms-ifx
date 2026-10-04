@@ -7,7 +7,7 @@ const router = Router();
 router.get("/monitor", (req, res) => {
     res.status(200).json({
         status: "success",
-        message: "API VMs IFX is running - " + new Date().toISOString(),
+        message: "API VMs IFX is running - " + new Date().toISOString() + "holaa" + process.env.NODE_ENV,
     });
 });
 
