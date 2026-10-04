@@ -38,9 +38,9 @@
     padding: .5rem .75rem .5rem .75rem;
     width: 100%;
     min-height: 2rem;
-    border: 1px solid var(--primary-dark);
-    border-radius: 0;
-    background-color: var(--primary-muted);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background-color: var(--surface);
     transition: border-color .2s ease, box-shadow .2s ease;
 
     &::placeholder{
@@ -55,6 +55,7 @@
     &:focus{
         outline: none;
         border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-muted);
     }
 }
 

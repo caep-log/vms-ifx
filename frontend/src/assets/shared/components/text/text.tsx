@@ -1,34 +1,38 @@
-import propTypes from 'prop-types';
-import './style.scss';
+import type { ReactNode } from "react";
+import "./style.scss";
 
-function Text(
-        { type, text, customClass, title}:
-        { type: string, name?: string, text: string, customClass?: string, title?: string }
-    ) {
-    const Component =
-        type === 'title'
-            ? 'h1'
-            : type === 'subtitle'
-            ? 'p'
-            : type === 'small'
-            ? 'small'
-            : 'span';
+type TextType = "title" | "subtitle" | "small" | "text";
 
-    return (
-        <Component
-            className={`vm-ifx-${type} ${customClass}`}
-            title={title}
-        >
-            {text}
-        </Component>
-    );
+interface TextProps {
+  type?: TextType;
+  text?: ReactNode;
+  customClass?: string;
+  title?: string;
 }
 
-Text.propTypes = {
-    type: propTypes.string.isRequired,
-    text: propTypes.string.isRequired,
-    customClass: propTypes.string,
-    title: propTypes.string,
+function Text({
+  type = "text",
+  text = "",
+  customClass = "",
+  title,
+}: TextProps) {
+  const Component =
+    type === "title"
+      ? "h1"
+      : type === "subtitle"
+      ? "p"
+      : type === "small"
+      ? "small"
+      : "span";
+
+  return (
+    <Component
+      className={`vm-ifx-${type} ${customClass}`.trim()}
+      title={title}
+    >
+      {text}
+    </Component>
+  );
 }
 
 export default Text;

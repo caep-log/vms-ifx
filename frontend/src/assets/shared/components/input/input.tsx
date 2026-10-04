@@ -314,7 +314,7 @@ function Input({
                     defaultValue={isCheckbox ? undefined : String(currentValue ?? '')}
                     disabled={disabled}
                 >
-                    <option value="">Seleccionar</option>
+                    <option value="">Select</option>
 
                     {options.map((option) => (
                         <option
