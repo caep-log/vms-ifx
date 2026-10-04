@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import Input from '../../shared/components/input/input';
 import Button from '../../shared/components/button/button';
 import { apiClient } from '../../infrastructure/http/apiClient';
 import './style.scss';
+import Text from '../../shared/components/text/text';
 
 interface VmFormData {
     name: string;
@@ -22,22 +23,23 @@ interface VmPayload {
     status: string;
 }
 
-interface VmResponse extends VmPayload {
-    id: string;
-}
+interface VmResponse extends VmPayload { id: string; }
+interface VmRouteState { vm?: VmResponse; }
 
-const initialForm: VmFormData = {
-    name: '',
-    cores: '',
-    ram: '',
-    disk: '',
-    os: '',
-};
+const initialForm: VmFormData = { name: '', cores: '', ram: '', disk: '', os: '' };
 
 export default function VmsForm() {
     const { id } = useParams();
+    const location = useLocation();
     const navigate = useNavigate();
-    const [form, setForm] = useState(initialForm);
+    const selectedVm = (location.state as VmRouteState | null)?.vm;
+    const [form, setForm] = useState<VmFormData>(() => selectedVm ? {
+        name: selectedVm.name,
+        cores: String(selectedVm.cores),
+        ram: String(selectedVm.ram),
+        disk: String(selectedVm.disk),
+        os: selectedVm.os,
+    } : initialForm);
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -48,7 +50,6 @@ export default function VmsForm() {
 
     const handleSubmit = async () => {
         setError('');
-
         if (!form.name.trim() || !form.cores || !form.os || !form.ram || !form.disk) {
             setError('Completa todos los campos.');
             return;
@@ -56,26 +57,30 @@ export default function VmsForm() {
 
         const ram = Number(form.ram);
         const disk = Number(form.disk);
-
         if (ram <= 0 || disk <= 0) {
             setError('RAM y disco deben ser mayores que cero.');
             return;
         }
 
         setIsSubmitting(true);
+        const payload: VmPayload = {
+            name: form.name.trim(),
+            cores: Number(form.cores),
+            ram,
+            disk,
+            os: form.os,
+            status: 'active',
+        };
 
         try {
-            await apiClient.post<VmResponse, VmPayload>('/api/vms', {
-                name: form.name.trim(),
-                cores: Number(form.cores),
-                ram,
-                disk,
-                os: form.os,
-                status: 'active',
-            });
+            if (id) {
+                await apiClient.put<VmResponse, VmPayload>(`/api/vms/${id}`, payload);
+            } else {
+                await apiClient.post<VmResponse, VmPayload>('/api/vms', payload);
+            }
             navigate('/vms');
         } catch {
-            setError('No fue posible registrar la máquina virtual.');
+            setError(`No fue posible ${id ? 'actualizar' : 'registrar'} la máquina virtual.`);
         } finally {
             setIsSubmitting(false);
         }
@@ -83,73 +88,16 @@ export default function VmsForm() {
 
     return (
         <section>
-            <div className="form-create-vm">
-                <h1>{id ? 'Editar VM' : 'Crear VM'}</h1>
-                <Input
-                    name="name"
-                    text="Nombre"
-                    onChange={handleChange}
-                    isRequired
-                />
-                <Input
-                    name="cores"
-                    text="Cores"
-                    typeInput="select"
-                    options={[1, 2, 4, 8].map((cores) => ({
-                        label: `${cores} core${cores === 1 ? '' : 's'}`,
-                        value: cores,
-                    }))}
-                    onChange={handleChange}
-                    isRequired
-                />
-                <Input
-                    name="os"
-                    text="Sistema operativo"
-                    typeInput="select"
-                    options={[
-                        { label: 'Ubuntu', value: 'Ubuntu' },
-                        { label: 'Debian', value: 'Debian' },
-                        { label: 'Windows Server', value: 'Windows Server' },
-                    ]}
-                    onChange={handleChange}
-                    isRequired
-                />
-
-                <Input
-                    name="ram"
-                    text="RAM (GB)"
-                    typeInput="select"
-                    options={[
-                        { label: '8GB', value: '8' },
-                        { label: '16GB', value: '16' },
-                        { label: '24GB', value: '24' },
-                        { label: '48GB', value: '48' },
-                        { label: '64GB', value: '64' },
-                        { label: '96GB', value: '96' },
-                    ]}
-                    onChange={handleChange}
-                    isRequired
-                />
-                <Input
-                    name="disk"
-                    text="Disco (GB)"
-                    typeInput="select"
-                    options={[
-                        { label: '128GB', value: '128' },
-                        { label: '240GB', value: '240' },
-                        { label: '512GB', value: '512' },
-                        { label: '1TB', value: '1024' },
-                        { label: '2TB', value: '2048' },
-                        { label: '4TB', value: '4096' },
-                    ]}
-                    onChange={handleChange}
-                    isRequired
-                />
-                {error && <p role="alert">{error}</p>}
-                <Button
-                    text={isSubmitting ? 'Registrando...' : 'Registrar VM'}
-                    onClick={handleSubmit}
-                />
+            <Text type="title" text={id ? 'Editar VM' : 'Crear VM'} />
+            <div className="container-form-new-vm">
+                <Input name="name" text="Name" onChange={handleChange} val={form.name} isRequired />
+                <Input name="cores" text="Cores" typeInput="select" val={form.cores} options={[1, 2, 4, 8].map((cores) => ({ label: `${cores} core${cores === 1 ? '' : 's'}`, value: cores }))} onChange={handleChange} isRequired />
+                <Input name="os" text="Operative System" typeInput="select" val={form.os} options={[{ label: 'Ubuntu', value: 'Ubuntu' }, { label: 'Debian', value: 'Debian' }, { label: 'Windows Server', value: 'Windows Server' }]} onChange={handleChange} isRequired />
+                <Input name="ram" text="RAM (GB)" typeInput="select" val={form.ram} options={['4', '8', '12', '16', '24', '32', '48', '96'].map((ram) => ({ label: `${ram}GB`, value: ram }))} onChange={handleChange} isRequired />
+                <Input name="disk" text="Disk (GB)" typeInput="select" val={form.disk} options={[['512', '512GB'], ['1024', '1TB'], ['2048', '2TB'], ['4096', '4TB']].map(([value, label]) => ({ label, value }))} onChange={handleChange} isRequired />
+                {error && <Text text={error} type="text" customClass="text-danger" />}
+                <br />
+                <Button text={isSubmitting ? (id ? 'Actualizando...' : 'Registrando...') : (id ? 'Guardar cambios' : 'Registrar VM')} onClick={handleSubmit} />
             </div>
         </section>
     );

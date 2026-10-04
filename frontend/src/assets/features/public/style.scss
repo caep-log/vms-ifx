@@ -4,14 +4,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 1rem;
+    background: radial-gradient(circle at 50% 0%, rgba(182, 255, 0, .08), transparent 30rem), var(--bg);
 }
 
 .mv-ifx-login-form{
-    min-width: 300px;
-    padding: 1.5rem;
-    border-radius: 12px;
-    background-color: var(--surface-elevated);
-    box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -28,8 +25,84 @@
 }
 
 .alert{
-    padding: 10px;
-    border-radius: 5px;
+    padding: .75rem;
+    border: 1px solid rgba(255, 69, 103, .25);
+    border-radius: 11px;
     text-align: center;
-    color: var(--text-secondary);
+    color: var(--danger);
+    background: rgba(255, 69, 103, .08);
+    font-size: .82rem;
+}
+
+.pill-forms{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    width: 100%;
+    padding: .25rem;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: var(--surface);
+
+    & > button{
+        flex: 1;
+        border: 1px solid transparent;
+        background-color: transparent;
+        color: var(--text-secondary);
+        box-shadow: none;
+        transition: .3s;
+
+        &:hover{
+            color: var(--text);
+            background-color: var(--surface-elevated);
+            box-shadow: none;
+        }
+
+        &.active-form{
+            border-color: var(--primary);
+            color: var(--bg);
+            background-color: var(--primary);
+        }
+    }
+}
+
+.ifx-public-forms{
+    min-width: 300px;
+    max-width: 420px;
+    width: 100%;
+    min-height: 460px;
+    padding: 1.75rem;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: linear-gradient(145deg, rgba(22, 33, 25, .96), rgba(16, 24, 18, .96));
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.auth-brand {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.auth-brand-mark {
+    padding: .55rem .45rem;
+    border-radius: 10px;
+    color: var(--bg);
+    background: var(--primary);
+    font-size: .75rem;
+    font-weight: 900;
+    box-shadow: var(--glow);
+}
+
+.auth-brand .vm-ifx-text { display: block; color: var(--text); font-weight: 700; }
+.auth-brand .vm-ifx-small { display: block; margin-top: .15rem; color: var(--text-muted); }
+.auth-intro { color: var(--text-secondary); font-size: .9rem; }
+.mv-ifx-login-form { flex: 1; }
+.mv-ifx-login-form > .vm-ifx-title { font-size: 1.5rem; }
+
+@media (max-width: 480px) {
+    .ifx-public-forms { min-height: 0; padding: 1.25rem; border-radius: 18px; }
 }
