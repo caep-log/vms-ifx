@@ -26,7 +26,7 @@ const handleError = (res: Response, error: unknown) => {
     if (error instanceof ConflictError)
         return res.status(409).json({ message: error.message });
     if (error instanceof z.ZodError)
-        return res.status(400).json({ message: "Datos inválidos" });
+        return res.status(400).json({ message: `Datos inválidos. ${error}` });
     return res.status(500).json({ message: "Error interno del servidor" });
 };
 
@@ -41,6 +41,7 @@ export class UsersController {
             setTokens(res, result);
             return res.json(result);
         } catch (e) {
+            console.log(e);
             return handleError(res, e);
         }
     };

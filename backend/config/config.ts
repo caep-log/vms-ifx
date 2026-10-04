@@ -15,10 +15,13 @@ import {
     DeleteCommandOutput
 } from "@aws-sdk/lib-dynamodb";
 
-const region = process.env.region;
-const endpoint = process.env.endpoint;
-const accessKeyId = process.env.accessKeyId || process.env.accessKey;
-const secretAccessKey = process.env.secretAccessKey;
+const region = process.env.AWS_REGION || process.env.region || "us-east-1";
+const endpoint = process.env.DYNAMODB_ENDPOINT || process.env.endpoint ||
+  (process.env.NODE_ENV === "production" ? undefined : "http://localhost:4566");
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID || process.env.accessKeyId || process.env.accessKey ||
+  (endpoint ? "test" : undefined);
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || process.env.secretAccessKey ||
+  (endpoint ? "test" : undefined);
 
 const LOG_TABLE_NAME = "errorLog";
 

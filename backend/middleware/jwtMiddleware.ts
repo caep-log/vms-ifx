@@ -30,7 +30,7 @@ export class JwtMiddleware {
 
     static admin(_req: Request, res: Response, next: NextFunction) {
         const user = res.locals.user as AccessTokenPayload | undefined;
-        if (user?.role !== "Administrador") {
+        if (user?.role !== "Admin") {
             return res.status(403).json({ message: "Permisos insuficientes" });
         }
         next();

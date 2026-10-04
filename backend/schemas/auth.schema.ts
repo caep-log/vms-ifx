@@ -7,7 +7,7 @@ export const AuthSchema = z.object({
 
 export const SignUpSchema = AuthSchema.extend({
     name: z.string().trim().min(1).max(120).optional(),
-    role: z.enum(["Administrador", "Cliente"]).default("Cliente"),
+    role: z.enum(["Admin", "Client"]).default("Client"),
 });
 
 export const RefreshTokenSchema = z.object({

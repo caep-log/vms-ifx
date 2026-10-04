@@ -1,4 +1,4 @@
-export type UserRole = "Administrador" | "Cliente";
+export type UserRole = "Admin" | "Client";
 
 export interface requestDTO {
     email: string;
