@@ -3,12 +3,11 @@ import { UsersController } from "../controllers/UsersController";
 import { JwtMiddleware } from "../middleware/jwtMiddleware";
 import { UsersRepository } from "../repository/users/usersRepository";
 import { AuthService } from "../services/AuthService";
-import { CognitoIdentityService } from "../services/CognitoIdentityService";
 
 const router = Router();
 const repository = new UsersRepository();
-const identity = new CognitoIdentityService();
-const service = new AuthService(repository, identity);
+// Cognito queda disponible en CognitoIdentityService.ts para una futura migración.
+const service = new AuthService(repository);
 const controller = new UsersController(service);
 
 router.post("/refresh", controller.refresh);

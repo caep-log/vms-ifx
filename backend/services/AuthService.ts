@@ -2,17 +2,19 @@ import { randomUUID } from "node:crypto";
 import { IUsersRepository } from "../repository/interfaces/users/IUsersRepository";
 import { requestDTO } from "../dtos/requestDTO";
 import { Jwt } from "../utils/jwt";
+import { hashPassword, verifyPassword } from "../utils/password";
 import { AuthInput, SignUpInput } from "../schemas/auth.schema";
-import { CognitoIdentityService } from "./CognitoIdentityService";
+
+// Cognito queda preparado en CognitoIdentityService.ts para una futura migración.
+// El workflow actual usa DynamoDB directamente para facilitar el entorno local.
 
 export class UnauthorizedError extends Error {}
 export class ConflictError extends Error {}
-export class RegistrationError extends Error {}
 
-type PublicUser = Omit<requestDTO, "refreshTokenJti">;
+type PublicUser = Omit<requestDTO, "passwordHash" | "passwordSalt" | "refreshTokenJti">;
 
 const publicUser = (user: requestDTO): PublicUser => {
-    const { refreshTokenJti, ...safeUser } = user;
+    const { passwordHash, passwordSalt, refreshTokenJti, ...safeUser } = user;
     return safeUser;
 };
 
@@ -20,22 +22,16 @@ const normalizeEmail = (email: string) => email.trim().toLowerCase();
 const invalidRefreshToken = () => new UnauthorizedError("Refresh token inválido");
 
 export class AuthService {
-    constructor(
-        private readonly repository: IUsersRepository,
-        private readonly identity: CognitoIdentityService,
-    ) {}
+    constructor(private readonly repository: IUsersRepository) {}
 
     async auth(dto: AuthInput) {
-        const email = normalizeEmail(dto.email);
-        const user = await this.repository.findByEmail(email);
-        if (!user) throw new UnauthorizedError("Credenciales inválidas");
-
-        try {
-            await this.identity.authenticate(email, dto.password);
-        } catch {
+        const user = await this.repository.findByEmail(normalizeEmail(dto.email));
+        if (!user?.passwordHash || !(await verifyPassword(dto.password, user.passwordHash))) {
             throw new UnauthorizedError("Credenciales inválidas");
         }
 
+        // Futuro Cognito:
+        // await this.identity.authenticate(normalizeEmail(dto.email), dto.password);
         return this.issueTokens(user);
     }
 
@@ -45,35 +41,18 @@ export class AuthService {
             throw new ConflictError("El correo ya está registrado");
         }
 
-        let userSub: string;
-        try {
-            userSub = (await this.identity.createUser(email, dto.password, dto.name)).userSub;
-        } catch (error: any) {
-            if (error?.name === "UsernameExistsException") {
-                throw new ConflictError("El correo ya está registrado");
-            }
-            throw error;
-        }
-
+        // Futuro Cognito:
+        // const { userSub } = await this.identity.createUser(email, dto.password, dto.name);
         const user: requestDTO = {
-            id: userSub,
+            id: randomUUID(),
             email,
             role: dto.role,
             ...(dto.name ? { name: dto.name } : {}),
+            passwordHash: await hashPassword(dto.password),
             createdAt: new Date().toISOString(),
         };
 
-        try {
-            await this.repository.create(user);
-        } catch {
-            try {
-                await this.identity.deleteUser(userSub);
-            } catch (rollbackError) {
-                console.error("No fue posible compensar el usuario de Cognito", { userSub, rollbackError });
-            }
-            throw new RegistrationError("No fue posible crear el perfil del usuario");
-        }
-
+        await this.repository.create(user);
         return this.issueTokens(user);
     }
 
