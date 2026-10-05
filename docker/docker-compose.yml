@@ -4,10 +4,14 @@ services:
     container_name: localstack-vms-ifx
     ports:
       - "4566:4566"
+
     environment:
-      SERVICES: dynamodb,cognito-idp
+      SERVICES: dynamodb
       DEBUG: 0
       AWS_DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+
     volumes:
       - localstack_data:/var/lib/localstack
       - ./init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh
