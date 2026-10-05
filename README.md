@@ -26,6 +26,40 @@
 - Docker Desktop
 - Docker Compose
 
+## IMPORTANTE
+Necesitamos Docker*
+
+## Ejecución rápida
+
+Desde la raíz del proyecto, instala las dependencias una sola vez:
+
+```powershell
+npm install
+npm --prefix backend install
+npm --prefix frontend install
+```
+
+Si todavía no existe el entorno del backend:
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+```
+
+Luego ejecuta todo con un único comando:
+
+```powershell
+npm run dev
+```
+
+Este comando levanta LocalStack, ejecuta `docker/init-aws.sh`, crea las tablas y los usuarios iniciales, y arranca el backend y el frontend.
+
+Usuarios iniciales:
+
+```text
+Admin:  admin@example.com / Admin123!
+Client: client@example.com / Client123!
+```
+
 ## Ejecución desde cero
 
 ### 1. Iniciar LocalStack
@@ -99,6 +133,5 @@ npm run preview
 ## Detener LocalStack
 
 ```powershell
-cd docker
-docker compose down
+npm run docker:down
 ```
