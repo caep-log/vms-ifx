@@ -1,6 +1,6 @@
 FROM localstack/localstack:latest
 
-ENV SERVICES=dynamodb,cognito-idp
+ENV SERVICES=dynamodb
 ENV DEBUG=0
 ENV PERSISTENCE=1
 
